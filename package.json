@@ -1,5 +1,24 @@
 {
   "dependencies": {
     "grammy": "^1.16.0"
-  }
+  },
+  "name": "js-telebot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsmerahmat/js-telegram-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itsmerahmat/js-telegram-bot/issues"
+  },
+  "homepage": "https://github.com/itsmerahmat/js-telegram-bot#readme",
+  "description": ""
 }
