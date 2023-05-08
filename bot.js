@@ -1,7 +1,9 @@
-const { Bot } = require("grammy");
+const { Bot, webhookCallback } = require("grammy");
+const express = require('express')
+require('dotenv').config()
 
 // Buat sebuah instance class `Bot` lalu masukkan token bot ke dalamnya.
-const bot = new Bot("1399041007:AAFD5-cGzOP0EzN4iJ4vSZ7jWtFCxXRehwI"); // <-- taruh token bot-mu di antara ""
+const bot = new Bot(process.env.TOKEN_BOT); // <-- taruh token bot-mu di antara ""
 
 // Sekarang, kamu bisa menambahkan listener ke object `bot`.
 // grammY akan memanggil listener ini ketika pengguna mengirim pesan ke bot.
@@ -15,4 +17,17 @@ bot.on("message", (ctx) => ctx.reply("Dapat pesan baru!"));
 // Bot akan melakukan koneksi ke server Telegram dan menunggu pesan masuk.
 
 // Mulai bot-nya.
-bot.start();
+if (process.env.NODE_ENV === "production") {
+  // Use Webhooks for the production server
+  const app = express();
+  app.use(express.json());
+  app.use(webhookCallback(bot, "express"));
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Bot listening on port ${PORT}`);
+  });
+} else {
+  // Use Long Polling for development
+  bot.start();
+}
