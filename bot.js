@@ -1,5 +1,6 @@
 const { Bot, webhookCallback } = require("grammy");
 const express = require('express');
+const axios = require('axios');
 require('dotenv').config();
 
 // Buat sebuah instance class `Bot` lalu masukkan token bot ke dalamnya.
@@ -56,6 +57,22 @@ bot.command("help", async (ctx) => {
   await new Promise(resolve => setTimeout(resolve, 1500));
   await ctx.reply("Apa yang bisa Patrick bantu, coba ketikkan beberapa perintah berikut :\n/start - Memulai Patrick\n/about - Tentang Patrick\n/code - Source Code Patrick\n/donation - Donasi Patrick\n/help - Bantuan Patrick\n/off - Berpisah Patrick\n/version - Versi Patrick\nDan coba juga tanyakan beberapa kata berikut :\n- Hai\n- Jam\n- Puisi\n- Wkwk\n- Bosan\n- Mantap\n- Sahabat");
   await ctx.api.sendSticker(ctx.chat.id, "CAACAgIAAxkBAAEnSO1e-b0b1GDzYAr9XzwZz3sAAQTonHAAAuIAA5afjA5cJvF6FyFYGBoE");
+});
+
+bot.command('cuaca', async (ctx) => {
+  const city = ctx.message.text.split(' ')[1];
+  const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_WEATHER}&units=metric`;
+  await bot.api.sendChatAction(ctx.chat.id, 'typing');
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  axios.get(url)
+    .then(function (response) {
+      const weatherText = `Cuaca ${response.data.weather[0].description}, suhu sekitar ${response.data.main.temp} °C di kota ${response.data.name}!`;
+      ctx.reply(weatherText);
+    })
+    .catch(function (error) {
+      console.log(error);
+      ctx.reply('Terjadi kesalahan saat mengambil data');
+    });
 });
 
 // Mencocokkan teks pesan dengan sebuah string atau regular expression (regex).
