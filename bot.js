@@ -62,17 +62,18 @@ bot.command("help", async (ctx) => {
 bot.command('cuaca', async (ctx) => {
   const city = ctx.message.text.split(' ')[1];
   const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_WEATHER}&units=metric`;
-  await bot.api.sendChatAction(ctx.chat.id, 'typing');
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  axios.get(url)
-    .then(function (response) {
-      const weatherText = `Cuaca ${response.data.weather[0].description}, suhu sekitar ${response.data.main.temp} °C di kota ${response.data.name}!`;
-      ctx.reply(weatherText);
-    })
-    .catch(function (error) {
-      console.log(error);
-      ctx.reply('Terjadi kesalahan saat mengambil data');
-    });
+  try {
+    const response = await axios.get(url);
+    const weatherText = `Cuaca ${response.data.weather[0].description}, suhu sekitar ${response.data.main.temp} °C di kota ${response.data.name}!`;
+    await bot.api.sendChatAction(ctx.chat.id, 'typing');
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    ctx.reply(weatherText);
+  } catch (error) {
+    console.log(error);
+    await bot.api.sendChatAction(ctx.chat.id, 'typing');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    ctx.reply('Terjadi kesalahan saat mengambil data');
+  }
 });
 
 // Mencocokkan teks pesan dengan sebuah string atau regular expression (regex).
